@@ -3,6 +3,13 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     concat: {
+      options: {
+        separator: ';',
+      },
+      dist: {
+        src: ['./public/**/*.js'],
+        dest: './public/dist/built.js',
+      }
     },
 
     mochaTest: {
@@ -21,15 +28,29 @@ module.exports = function(grunt) {
     },
 
     uglify: {
+      'my_target': {
+        files: {
+          './public/dist/built.min.js': ['./public/dist/built.js']
+        }
+      }
     },
 
     eslint: {
       target: [
-        // Add list of files to lint here
+        './public/**/*.js'
       ]
     },
 
     cssmin: {
+      options: {
+        shorthandCompacting: false,
+        roundingPrecision: -1
+      },
+      target: {
+        files: {
+          './public/dist/style.min.css': ['./public/style.css']
+        }
+      }
     },
 
     watch: {
@@ -51,6 +72,7 @@ module.exports = function(grunt) {
 
     shell: {
       prodServer: {
+        command: 'git push live master'
       }
     },
   });
@@ -77,18 +99,25 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build', [
+    'eslint', 'minify', 'test'
   ]);
 
   grunt.registerTask('upload', function(n) {
     if (grunt.option('prod')) {
-      // add your production server task here
+      grunt.task.run('nodemon');
+      grunt.task.run('minify');
     } else {
       grunt.task.run([ 'server-dev' ]);
+      grunt.task.run([ 'build', 'shell']);
     }
   });
 
   grunt.registerTask('deploy', [
-    // add your deploy tasks here
+    'build', 'upload'
+  ]);
+
+  grunt.registerTask('minify', [
+    'concat', 'uglify', 'cssmin'
   ]);
 
 
