@@ -104,7 +104,6 @@ module.exports = function(grunt) {
 
   grunt.registerTask('upload', function(n) {
     if (grunt.option('prod')) {
-      grunt.task.run('nodemon');
       grunt.task.run('minify');
     } else {
       grunt.task.run([ 'server-dev' ]);
