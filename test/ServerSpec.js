@@ -11,14 +11,13 @@ var Link = require('../app/models/link');
 // NOTE: these tests are designed for mongo!
 /////////////////////////////////////////////////////
 
-xdescribe('', function() {
+describe('', function() {
 
   beforeEach(function(done) {
     // Log out currently signed in user
     request(app)
       .get('/logout')
       .end(function(err, res) {
-
         // Delete objects from db so they can be created later for the test
         Link.remove({url: 'http://www.roflzoo.com/'}).exec();
         User.remove({username: 'Savannah'}).exec();
@@ -48,6 +47,7 @@ xdescribe('', function() {
             'url': 'http://www.roflzoo.com/'})
           .expect(200)
           .expect(function(res) {
+            // console.log(res.body);
             expect(res.body.url).to.equal('http://www.roflzoo.com/');
             expect(res.body.code).to.be.ok;
           })
@@ -62,7 +62,7 @@ xdescribe('', function() {
           .expect(200)
           .expect(function(res) {
             Link.findOne({'url': 'http://www.roflzoo.com/'})
-              .exec(function(err, link) {
+              .exec(function(err, link ) {
                 if (err) { console.log(err); }
                 expect(link.url).to.equal('http://www.roflzoo.com/');
               });
@@ -97,7 +97,7 @@ xdescribe('', function() {
           baseUrl: 'http://127.0.0.1:4568',
           visits: 0
         });
-
+        link.make();
         link.save(function() {
           done();
         });
@@ -208,10 +208,12 @@ xdescribe('', function() {
   describe('Account Login:', function() {
 
     beforeEach(function(done) {
-      new User({
+      var user = new User({
         'username': 'Phillip',
         'password': 'Phillip'
-      }).save(function() {
+      });
+      user.make();
+      user.save(function() {
         done();
       });
     });
