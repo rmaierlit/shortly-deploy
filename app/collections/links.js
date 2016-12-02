@@ -13,7 +13,7 @@ var Links = new Schema({
   baseUrl: {type: String, required: true},
   code: {type: String, required: true},
   title: {type: String},
-  visits: {type: Number},
+  visits: {type: Number, default: 0},
   'created_at': {type: Date, default: Date.now},
   'updated_at': {type: Date, default: Date.now}
 });
